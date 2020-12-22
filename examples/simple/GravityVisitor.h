@@ -18,12 +18,59 @@ private:
   static constexpr int  nMinParticleNode = 6;
 
   static void addGravity(const SpatialNode<CentroidData>& source, SpatialNode<CentroidData>& target) {
-    for (int i = 0; i < target.n_particles; i++) {
-      Vector3D<Real> diff = source.data.centroid - target.particles()[i].position;
-      Real rsq = diff.lengthSquared();
-      if (rsq != 0) {
-        Vector3D<Real> accel = diff * (source.data.sum_mass / (rsq * sqrt(rsq)));
-        target.applyAcceleration(i, accel);
+    // Loop unrolling with a factor of 8
+    static constexpr int UNROLL_FACTOR = 8;
+    const Vector3D<Real>& centroid = source.data.centroid;
+    const Real& sum_mass = source.data.sum_mass;
+    Vector3D<Real> diff[UNROLL_FACTOR];
+    Real rsq[UNROLL_FACTOR];
+    Vector3D<Real> accel[UNROLL_FACTOR];
+
+    int n_loops = target.n_particles / UNROLL_FACTOR;
+    for (int i = 0; i < n_loops; i++) {
+      diff[0] = centroid - target.particles()[UNROLL_FACTOR*i].position;
+      diff[1] = centroid - target.particles()[UNROLL_FACTOR*i+1].position;
+      diff[2] = centroid - target.particles()[UNROLL_FACTOR*i+2].position;
+      diff[3] = centroid - target.particles()[UNROLL_FACTOR*i+3].position;
+      diff[4] = centroid - target.particles()[UNROLL_FACTOR*i+4].position;
+      diff[5] = centroid - target.particles()[UNROLL_FACTOR*i+5].position;
+      diff[6] = centroid - target.particles()[UNROLL_FACTOR*i+6].position;
+      diff[7] = centroid - target.particles()[UNROLL_FACTOR*i+7].position;
+      rsq[0] = diff[0].lengthSquared();
+      rsq[1] = diff[1].lengthSquared();
+      rsq[2] = diff[2].lengthSquared();
+      rsq[3] = diff[3].lengthSquared();
+      rsq[4] = diff[4].lengthSquared();
+      rsq[5] = diff[5].lengthSquared();
+      rsq[6] = diff[6].lengthSquared();
+      rsq[7] = diff[7].lengthSquared();
+      accel[0] = (rsq[0] != 0) ? diff[0] * (sum_mass / (rsq[0] * sqrt(rsq[0]))) : 0;
+      accel[1] = (rsq[1] != 0) ? diff[1] * (sum_mass / (rsq[1] * sqrt(rsq[1]))) : 0;
+      accel[2] = (rsq[2] != 0) ? diff[2] * (sum_mass / (rsq[2] * sqrt(rsq[2]))) : 0;
+      accel[3] = (rsq[3] != 0) ? diff[3] * (sum_mass / (rsq[3] * sqrt(rsq[3]))) : 0;
+      accel[4] = (rsq[4] != 0) ? diff[4] * (sum_mass / (rsq[4] * sqrt(rsq[4]))) : 0;
+      accel[5] = (rsq[5] != 0) ? diff[5] * (sum_mass / (rsq[5] * sqrt(rsq[5]))) : 0;
+      accel[6] = (rsq[6] != 0) ? diff[6] * (sum_mass / (rsq[6] * sqrt(rsq[6]))) : 0;
+      accel[7] = (rsq[7] != 0) ? diff[7] * (sum_mass / (rsq[7] * sqrt(rsq[7]))) : 0;
+      target.applyAcceleration(UNROLL_FACTOR*i, accel[0]);
+      target.applyAcceleration(UNROLL_FACTOR*i+1, accel[1]);
+      target.applyAcceleration(UNROLL_FACTOR*i+2, accel[2]);
+      target.applyAcceleration(UNROLL_FACTOR*i+3, accel[3]);
+      target.applyAcceleration(UNROLL_FACTOR*i+4, accel[4]);
+      target.applyAcceleration(UNROLL_FACTOR*i+5, accel[5]);
+      target.applyAcceleration(UNROLL_FACTOR*i+6, accel[6]);
+      target.applyAcceleration(UNROLL_FACTOR*i+7, accel[7]);
+    }
+
+    // Process remaining particles
+    int remainder = target.n_particles % UNROLL_FACTOR;
+    int k = 0;
+    for (int i = target.n_particles - remainder; i < target.n_particles; i++, k++) {
+      diff[k] = centroid - target.particles()[i].position;
+      rsq[k] = diff[k].lengthSquared();
+      if (rsq[k] != 0) {
+        accel[k] = diff[k] * (sum_mass / (rsq[k] * sqrt(rsq[k])));
+        target.applyAcceleration(i, accel[k]);
       }
     }
   }
