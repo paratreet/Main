@@ -8,7 +8,9 @@
 #include "ParticleMsg.h"
 #include "MultiData.h"
 #include "paratreet.decl.h"
+#include "LBCommon.h"
 
+CkpvExtern(int, _lb_obj_index);
 extern CProxy_TreeSpec treespec;
 extern CProxy_Reader readers;
 
@@ -288,7 +290,15 @@ void Partition<Data>::doPerturb()
   saved_perturb.waiting = false;
   std::vector<Particle> particles;
   copyParticles(particles);
+  int size = particles.size();
   r_local->countPartitionParticles(particles.size());
+  #if CMK_LB_USER_DATA
+  if (CkpvAccess(_lb_obj_index) != -1) {
+    void *data = this->getObjUserData(CkpvAccess(_lb_obj_index));
+    LBUserData lb_data{pt, this->thisIndex, size};
+    *(LBUserData *) data = lb_data;
+  }
+  #endif
   for (auto && p : particles) {
     p.perturb(saved_perturb.timestep, readers.ckLocalBranch()->universe.box);
   }

@@ -1,0 +1,9 @@
+module PrefixLB {
+
+extern module CentralLB;
+initnode void lbinit(void);
+group [migratable] PrefixLB : CentralLB {
+  entry void PrefixLB(const CkLBOptions &);
+};
+
+};

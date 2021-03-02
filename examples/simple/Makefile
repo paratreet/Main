@@ -13,14 +13,14 @@ OTHERS = CountManager.h
 Main.decl.h: Main.ci
 	$(CHARMC) $<
 
-Gravity: Main.decl.h Main.o Gravity.o
-	$(CHARMC) -language charm++ -module CommonLBs -o Gravity Gravity.o Main.o $(LD_LIBS)
+Gravity: Main.decl.h Gravity.o Main.o
+	$(CHARMC) -language charm++ -module CommonLBs -module PrefixLB -module DistributedPrefixLB -o Gravity Gravity.o Main.o $(LD_LIBS)
 
 Collision: Main.decl.h Main.o Collision.o
-	$(CHARMC) -language charm++ -module CommonLBs -o Collision Collision.o Main.o $(LD_LIBS)
+	$(CHARMC) -language charm++ -module CommonLBs -module PrefixLB -module DistributedPrefixLB -o Collision Collision.o Main.o $(LD_LIBS)
 
-SPH: Main.decl.h Main.o SPH.o
-	$(CHARMC) -language charm++ -module CommonLBs -o SPH SPH.o Main.o $(LD_LIBS)
+SPH: Main.decl.h SPH.o Main.o
+	$(CHARMC) -language charm++ -module CommonLBs -module PrefixLB -module DistributedPrefixLB -o SPH SPH.o Main.o $(LD_LIBS)
 
 Gravity.o: Gravity.C
 	$(CHARMC) -c $<

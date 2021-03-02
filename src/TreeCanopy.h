@@ -5,7 +5,9 @@
 #include "templates.h"
 #include "Node.h"
 #include "CacheManager.h"
+#include "LBCommon.h"
 
+CkpvExtern(int, _lb_obj_index);
 template<typename Data>
 class CProxy_Subtree;
 
@@ -47,6 +49,17 @@ void TreeCanopy<Data>::recvProxies(TPHolder<Data> tp_holder, int tp_index_,
   tp_index = tp_index_;
   cm_proxy = cm_proxy_;
   d_proxy = dp_holder.proxy;
+
+  this->setMigratable(false);
+
+  #if CMK_LB_USER_DATA
+  if (CkpvAccess(_lb_obj_index) != -1) {
+    void *data = this->getObjUserData(CkpvAccess(_lb_obj_index));
+    LBUserData lb_data{cp};
+    *(LBUserData *) data = lb_data;
+    //CkPrintf("[C %d] \n", this->thisIndex);
+  }
+  #endif
 }
 
 template <typename Data>
