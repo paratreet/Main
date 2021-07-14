@@ -29,6 +29,18 @@ mainmodule Main {
         entry void reset(const CkCallback&);
     }
 
+    group NeighborListCollectorDen {
+        entry NeighborListCollectorDen();
+        entry void addRequest(int, Key);
+        entry [inline] void forwardRequest(int, Particle);
+        entry [inline] void fillRequest(int, Particle);
+        entry [inline] void savePartitionHome(int, Particle);
+        entry void shareDensities();
+        entry void addDensity(Particle);
+        entry void forwardDensity(Particle);
+        entry void reset(const CkCallback&);
+    }
+
     nodegroup CollisionTracker {
         entry CollisionTracker();
         entry [exclusive] void setShouldDelete(Key key);

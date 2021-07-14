@@ -2,6 +2,7 @@
 
 #include "GravityVisitor.h"
 #include "DensityVisitor.h"
+#include "DensityVisitorDen.h"
 //#include "PressureVisitor.h"
 #include "CountVisitor.h"
 #include "CollisionVisitor.h"
@@ -187,5 +188,6 @@ PARATREET_REGISTER_MAIN(ExMain);
 // #include "paratreet.def.h"
 #include "templates.h"
 
+#include "NeighborListCollectorDen.h"
 #include "Main.def.h"
 
