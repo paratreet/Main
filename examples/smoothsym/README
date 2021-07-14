@@ -1,0 +1,6 @@
+This is a stripped down application written as a test of more flexible PerLeaf
+interface.
+
+The application is a "gather-scatter" density estimate.  I.e. the mean of a
+density estimated from my neighbors, and the density estimated by those
+who consider me a neighbor.
