@@ -1,4 +1,5 @@
 module paratreet {
+  include "CoreFunctions.h";
   include "Configuration.h";
   include "CkArrayIndexKey.h";
   include "BoundingBox.h";
@@ -91,7 +92,7 @@ module paratreet {
     entry void rebuild(BoundingBox, TPHolder<Data>, bool);
     entry void output(CProxy_Writer, int, CkCallback);
     entry void output(CProxy_TipsyWriter, int, CkCallback);
-    entry void callPerLeafFn(int indicator, CkCallback cb);
+    entry void callPerLeafFn(CkReference<paratreet::PerLeafAble<Data>>, const CkCallback&);
     entry void deleteParticleOfOrder(int order);
     entry void pauseForLB();
   }

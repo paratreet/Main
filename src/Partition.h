@@ -55,7 +55,7 @@ struct Partition : public CBase_Partition<Data> {
   void rebuild(BoundingBox, TPHolder<Data>, bool);
   void output(CProxy_Writer w, int n_total_particles, CkCallback cb);
   void output(CProxy_TipsyWriter w, int n_total_particles, CkCallback cb);
-  void callPerLeafFn(int indicator, const CkCallback& cb);
+  void callPerLeafFn(paratreet::PerLeafAble<Data>&, const CkCallback&);
   void deleteParticleOfOrder(int order) {particle_delete_order.insert(order);}
   void pup(PUP::er& p);
   void makeLeaves(int);
@@ -335,11 +335,12 @@ void Partition<Data>::flush(CProxy_Reader readers, std::vector<Particle>& partic
 }
 
 template <typename Data>
-void Partition<Data>::callPerLeafFn(int indicator, const CkCallback& cb)
+void Partition<Data>::callPerLeafFn(paratreet::PerLeafAble<Data>& perLeafFn, const CkCallback& cb)
 {
   for (auto && leaf : leaves) {
-    paratreet::perLeafFn(indicator, *leaf, this);
+    perLeafFn(*leaf, this);
   }
+
   this->contribute(cb);
 }
 

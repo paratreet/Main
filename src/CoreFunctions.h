@@ -27,7 +27,15 @@ namespace paratreet {
     inline void postIterationFn(BoundingBox& box, ProxyPack<T>& pack, int iter);
 
     template<typename T>
-    inline void perLeafFn(int indicator, SpatialNode<T>& node, Partition<T>* partition);
+    class PerLeafAble: public PUP::able {
+      public:  
+        PerLeafAble(void) = default;
+        PerLeafAble(CkMigrateMessage *m): PUP::able(m) {}
+
+        virtual void pup(PUP::er &p) override { PUP::able::pup(p); }
+
+        virtual void operator()(SpatialNode<T>& node, Partition<T>* partition) = 0;
+    };
 }
 
 #endif

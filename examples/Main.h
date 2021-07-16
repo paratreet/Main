@@ -10,7 +10,6 @@ class ExMain: public paratreet::Main<CentroidData> {
   virtual void preTraversalFn(ProxyPack<CentroidData>&) override;
   virtual void traversalFn(BoundingBox&, ProxyPack<CentroidData>&, int) override;
   virtual void postIterationFn(BoundingBox&, ProxyPack<CentroidData>&, int) override;
-  virtual void perLeafFn(int indicator, SpatialNode<CentroidData>&, Partition<CentroidData>* partition) override;
   virtual void main(CkArgMsg*) override;
   virtual void run(void) override;
 };

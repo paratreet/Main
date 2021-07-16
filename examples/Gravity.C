@@ -61,6 +61,3 @@ extern bool periodic;
     Real universe_box_len = universe.box.greater_corner.x - universe.box.lesser_corner.x;
     return universe_box_len / max_velocity / std::cbrt(universe.n_particles);
   }
-
-  void ExMain::perLeafFn(int indicator, SpatialNode<CentroidData>& leaf, Partition<CentroidData>* partition) {}
-
